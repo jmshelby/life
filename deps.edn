@@ -1,0 +1,4 @@
+{:paths   ["src"]
+ :deps    {org.clojure/clojure {:mvn/version "1.11.1"}
+           quil/quil           {:mvn/version "3.1.0"}}
+ :aliases {:gui {:main-opts ["-m" "life.gui"]}}}

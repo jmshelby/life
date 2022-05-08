@@ -3,14 +3,15 @@
             [quil.core :as q]
             [quil.middleware :as m]))
 
-(def BORDER 10)
+(def BOARD-SIZE 130)
+(def FRAME-RATE 8)
+
+(def BORDER 3)
 (def CELL-MARGIN 1)
+(def CELL-SIZE 8)
+(def CELL-CORNER 2)
 
-(def CELL-SIZE 15)
-
-(def CELL-CORNER 3)
-
-(defn board-start [] [10 10])
+(defn board-start [] [5 5])
 
 (defn aged-color [age]
   (cond
@@ -20,13 +21,11 @@
     (= age 3) [200 100 100]
     (= age 4) [200 200 0]
     (= age 5) [255 150 0]
-    (> age 5) [255 0 255]
-    )
-  )
+    (> age 5) [255 0 255]))
 
 (defn draw-state [{:keys [state]}]
-  (println "draw state " state)
-  (q/background 10)
+  (println "draw state " (count state))
+  (q/background 0)
   (let [[start-x start-y] (map (partial + BORDER) (board-start))]
     (doseq [[[x y] age] state]
       (let [x (+ start-x BORDER (* x (+ CELL-MARGIN CELL-SIZE)))
@@ -35,70 +34,42 @@
         (q/rect x y
                 CELL-SIZE
                 CELL-SIZE
-                CELL-CORNER)
-        )
-      )
-    )
-  )
+                CELL-CORNER)))))
 
 (defn update-state [state]
-  (println "update state")
-  (life/advance-board state)
-  )
+  (life/advance-board state))
 
 (defn settings []
   ;; This appears to only work in cljs renderers so far
   (q/pixel-density 2))
 
+(defn rand-board [h w sparsity]
+  (let [sample   (* sparsity (* h w))
+        rand-age #(rand-int 10)
+        xs       (repeatedly #(rand-int w))
+        ys       (repeatedly #(rand-int h))]
+    (->> (repeatedly rand-age)
+         (filter (partial < 0))
+         (map vector (map vector xs ys))
+         (take sample)
+         (into {}))))
+
 (defn setup []
   (q/background 10)
   ;; (q/stroke-weight (int (* SCALE WEIGHT-RATIO)))
-  (q/frame-rate 5)
+  (q/frame-rate FRAME-RATE)
   ;; TODO - mess with camera
   ;; (q/color-mode :hsb)  ;; Set color mode to HSB (HSV) instead of default RGB.
-
-  {:height 100
-   :width  100
-   :state  {
-            [5,5] 1
-            [5,4] 1
-            [4,4] 1
-
-            [20,4]  1
-            [20,5]  1
-            [20,6]  1
-            [20,7]  1
-            ;; [20,8]  1
-            ;; [20,9]  1
-            [20,10] 1
-            [20,11] 1
-            [20,12] 1
-            [20,13] 1
-            [20,14] 1
-            [20,15] 1
-            [20,16] 1
-
-            [20,17] 1
-            [20,18] 1
-            [20,19] 1 [21,19] 1 [22,19] 1 [23,19] 1
-
-
-
-            [2,3] 1
-            [2,4] 1
-            [2,5] 1
-            [2,6] 1
-            [2,7] 1
-
-
-            }}
-  )
+  {:height BOARD-SIZE
+   :width  BOARD-SIZE
+   :state  (rand-board BOARD-SIZE BOARD-SIZE 0.1)})
 
 (q/defsketch board
   :title "Life"
   :host "host"
 
-  :size [1000 1000]
+  ;; TODO - auto pick size to fit board
+  :size [2000 2000]
   :features [
              ;; :keep-on-top
              :resizable

@@ -3,19 +3,20 @@
             [quil.core :as q]
             [quil.middleware :as m]))
 
-(def BOARD-SIZE 130)
-(def FRAME-RATE 8)
+(def BOARD-SIZE 150)
+(def FRAME-RATE 40)
 
 (def BORDER 3)
-(def CELL-MARGIN 1)
+(def CELL-MARGIN 0)
 (def CELL-SIZE 8)
-(def CELL-CORNER 2)
+(def CELL-CORNER 5)
 
 (defn board-start [] [5 5])
 
 (defn aged-color [age]
   (cond
     ;; I just made this shit up ... have no idea what it will look like...
+    (= age 0) [0 0   0]
     (= age 1) [0 0   200]
     (= age 2) [0 200 200]
     (= age 3) [200 100 100]
@@ -24,12 +25,12 @@
     (> age 5) [255 0 255]))
 
 (defn draw-state [{:keys [state]}]
-  (println "draw state " (count state))
   (q/background 0)
   (let [[start-x start-y] (map (partial + BORDER) (board-start))]
     (doseq [[[x y] age] state]
       (let [x (+ start-x BORDER (* x (+ CELL-MARGIN CELL-SIZE)))
             y (+ start-y BORDER (* y (+ CELL-MARGIN CELL-SIZE)))]
+        ;; (apply q/stroke (aged-color (- age 1)))
         (apply q/fill (aged-color age))
         (q/rect x y
                 CELL-SIZE
@@ -62,7 +63,7 @@
   ;; (q/color-mode :hsb)  ;; Set color mode to HSB (HSV) instead of default RGB.
   {:height BOARD-SIZE
    :width  BOARD-SIZE
-   :state  (rand-board BOARD-SIZE BOARD-SIZE 0.1)})
+   :state  (rand-board BOARD-SIZE BOARD-SIZE 0.5)})
 
 (q/defsketch board
   :title "Life"

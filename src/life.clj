@@ -17,6 +17,17 @@
            [(inc x) (dec y)]
            [(dec x) (inc y)]]))
 
+(defn *wrap [max point]
+  (cond
+    ;; Wrap to the end
+    (> 0 point)    (dec max)
+    ;; Wrap to the begining
+    (>= point max) 0
+    ;; In bounds
+    :else          point))
+
+(def wrap (memoize *wrap))
+
 (defn *neighbors-wrapped
   [{:keys [height width]} [x y]]
   (->> ;; Each of the neighbors
@@ -30,22 +41,8 @@
      [(dec x) (inc y)]]
     ;; Wrap around to the other side
     (map (fn [[x y]]
-           (let [x (cond
-                     ;; Wrap to the end
-                     (> 0 x)      (dec width)
-                     ;; Wrap to the begining
-                     (>= x width) 0
-                     ;; In bounds
-                     :else        x)
-                 y (cond
-                     ;; Wrap to the end
-                     (> 0 y)       (dec height)
-                     ;; Wrap to the begining
-                     (>= y height) 0
-                     ;; In bounds
-                     :else         y)]
-             ;; Return new pair
-             [x y])))))
+           [(wrap width x)
+            (wrap height y)]))))
 
 (def neighbors (memoize *neighbors-wrapped))
 
@@ -69,12 +66,14 @@
            )
       1
 
-
       ;; Live
       (and cell
            (or
              (= 2 bors)
-             (= 3 bors))
+             (= 3 bors)
+             ;; (= 4 bors)
+             ;; (= 5 bors)
+             )
            ;; Random ability to die
            (< (rand) 0.999)
            )
@@ -116,7 +115,7 @@
   [{:keys [width height] :as board}]
   (assoc board :state
          (->> (board-coords width height)
-              (map (juxt identity (partial advance-cell board)))
+              (pmap (juxt identity (partial advance-cell board)))
               (filter second)
               (into {}))))
 

@@ -3,12 +3,12 @@
             [quil.core :as q]
             [quil.middleware :as m]))
 
-(def BOARD-SIZE 150)
-(def FRAME-RATE 40)
+(def BOARD-SIZE 100)
+(def FRAME-RATE 60)
 
 (def BORDER 3)
 (def CELL-MARGIN 0)
-(def CELL-SIZE 8)
+(def CELL-SIZE 10)
 (def CELL-CORNER 5)
 
 (defn board-start [] [5 5])
@@ -63,7 +63,7 @@
   ;; (q/color-mode :hsb)  ;; Set color mode to HSB (HSV) instead of default RGB.
   {:height BOARD-SIZE
    :width  BOARD-SIZE
-   :state  (rand-board BOARD-SIZE BOARD-SIZE 0.5)})
+   :state  (rand-board BOARD-SIZE BOARD-SIZE 0.2)})
 
 (q/defsketch board
   :title "Life"

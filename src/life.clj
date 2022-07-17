@@ -1,22 +1,5 @@
 (ns life)
 
-(defn *neighbors-bounded [{:keys [height width]} [x y]]
-  ;; Filters out cells that are out of bounds
-  (filter (fn [[x y]]
-            (and
-              (> x -1)
-              (> y -1)
-              (< x width)
-              (< y height)))
-          [[(dec x) y]
-           [(inc x) y]
-           [x (inc y)]
-           [x (dec y)]
-           [(inc x) (inc y)]
-           [(dec x) (dec y)]
-           [(inc x) (dec y)]
-           [(dec x) (inc y)]]))
-
 (defn *wrap [max point]
   (cond
     ;; Wrap to the end
@@ -59,11 +42,11 @@
       ;; Born
       (and (not cell)
            (or
-             ;; (= 2 bors)
              (= 3 bors)
+             ;; Alternatives that are fun to mess with...
+             ;; (= 2 bors)
              ;; (= 4 bors)
-             )
-           )
+             ))
       1
 
       ;; Live
@@ -71,6 +54,7 @@
            (or
              (= 2 bors)
              (= 3 bors)
+             ;; Alternatives that are fun to mess with...
              ;; (= 4 bors)
              ;; (= 5 bors)
              )
@@ -78,6 +62,8 @@
            (< (rand) 0.999)
            )
       (inc cell)
+
+      ;; Some other fun things to mess with...
 
       ;; Random ability to live (with over-population)
       ;; (and cell
@@ -88,15 +74,15 @@
       ;; (inc cell)
 
       ;; Random ability to spawn
-      (and (not cell)
-           (> (rand) 0.99999))
-      1
+      ;; (and (not cell)
+      ;;      (> (rand) 0.99999))
+      ;; 1
 
       ;; Random ability to spawn, better when next to someone
-      (and (not cell)
-           (< 0 bors)
-           (> (rand) 0.999))
-      1
+      ;; (and (not cell)
+      ;;      (< 0 bors)
+      ;;      (> (rand) 0.999))
+      ;; 1
 
       ;; Die
       :else

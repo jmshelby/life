@@ -37,9 +37,6 @@
                 CELL-SIZE
                 CELL-CORNER)))))
 
-(defn update-state [state]
-  (life/advance-board state))
-
 (defn settings []
   ;; This appears to only work in cljs renderers so far
   (q/pixel-density 2))
@@ -94,7 +91,7 @@
   :middleware [m/fun-mode])
 
 (defn -main [& _]
-  (println "I guess it just starts when evaling??")
+  ;; The board above just starts up once this NS is evaluated
   )
 
 ;;
